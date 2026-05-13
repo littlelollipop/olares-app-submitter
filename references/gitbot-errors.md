@@ -2,6 +2,31 @@
 
 本文档列出 Olares 应用提交过程中 GitBot 常见的校验错误及解决方案。
 
+## 目录
+
+1. [PR 标题格式错误](#1-pr-标题格式错误)
+2. [版本号格式错误](#2-版本号格式错误)
+3. [版本号未递增](#3-版本号未递增)
+4. [Chart.yaml 和 OlaresManifest.yaml 版本号不一致](#4-chartyaml-和-olaresmanifestyaml-版本号不一致)
+5. [owners 文件格式错误](#5-owners-文件格式错误)
+6. [owners 文件中不包含提交者用户名](#6-owners-文件中不包含提交者用户名)
+7. [资产链接失效或不符合规格](#7-资产链接失效或不符合规格)
+8. [OAC 目录结构不完整](#8-oac-目录结构不完整)
+9. [存在安全漏洞或恶意代码](#9-存在安全漏洞或恶意代码)
+10. [PR 类型与内容不匹配](#10-pr-类型与内容不匹配)
+11. [同时存在多个打开的 PR](#11-同时存在多个打开的-pr)
+12. [PR 被 GitBot 自动关闭](#12-pr-被-gitbot-自动关闭)
+13. [文件夹命名不符合规范](#13-文件夹命名不符合规范)
+14. [PR 标题中的应用名称与目录名不匹配](#14-pr-标题中的应用名称与目录名不匹配)
+15. [一个 PR 包含多个目录的修改](#15-一个-pr-包含多个目录的修改)
+16. [缺少 values.yaml 文件](#16-缺少-valuesyaml-文件)
+17. [OlaresManifest.yaml 缺少必需字段](#17-olaresmanifestyaml-缺少必需字段)
+18. [templates 中的镜像字段包含模板占位符](#18-templates-中的镜像字段包含模板占位符)
+19. [templates 引用了不存在的 Values 字段](#19-templates-引用了不存在的-values-字段)
+20. [容器未设置资源限制](#20-容器未设置资源限制)
+
+---
+
 ## 1. PR 标题格式错误
 
 **错误信息**：
@@ -273,6 +298,267 @@ Multiple open PRs found for the same app directory. Please close all but one.
 5. 等待 GitBot 重新检查
 
 **注意**：PR 被关闭后，不得尝试重新打开，必须创建新 PR。
+
+## 13. 文件夹命名不符合规范
+
+**错误信息**：
+```
+invalid folder name: '.../test-hello-world' must match pattern '^[w\s.,!?;:'"-]{1,30}$'
+```
+
+**原因**：
+- OAC 目录名包含不允许的字符（如 `-` 连字符）
+- 目录名长度超过 30 个字符
+- 目录名包含空格或其他特殊字符
+
+**解决方案**：
+1. 重命名 OAC 目录，只允许使用以下字符：
+   - 字母数字：`a-z`, `A-Z`, `0-9`
+   - 空格：`\s`
+   - 标点符号：`. , ! ? ; : ' " -`
+2. 目录名长度必须在 1-30 个字符之间
+3. 推荐使用下划线 `_` 代替连字符 `-`
+
+**示例**：
+```
+❌ 错误：test-hello-world（包含连字符）
+❌ 错误：my app（包含空格）
+✅ 正确：test_hello_world
+✅ 正确：skilltestapp
+✅ 正确：myapp_v1
+```
+
+## 14. PR 标题中的应用名称与目录名不匹配
+
+**错误信息**：
+```
+Authorization exceptions. [open /tmp/git.../test-hello-world/owners: no such file or directory]
+```
+
+**原因**：
+- PR 标题中指定的应用目录名与实际提交的目录名不一致
+- 修改了目录名但忘记更新 PR 标题
+
+**解决方案**：
+1. 检查 PR 标题中的应用目录名（格式：`[类型][目录名][版本]`）
+2. 确保与 Fork 仓库中的实际目录名完全一致
+3. 修改 PR 标题或重命名目录，确保两者一致
+4. 提交新的 commit 触发 GitBot 重新检查
+
+**示例**：
+```
+PR 标题：[NEW][skilltestapp][1.0.0] 提交测试应用
+实际目录：skilltestapp/  ✅ 匹配
+
+PR 标题：[NEW][test-hello-world][1.0.0] 提交测试应用
+实际目录：skilltestapp/  ❌ 不匹配
+```
+
+## 15. 一个 PR 包含多个目录的修改
+
+**错误信息**：
+```
+Invalid change. Change in multiple directory detected
+```
+
+**原因**：
+- 一个 PR 中提交了多个应用的修改
+- 一个 PR 包含了多个 OAC 目录的变更
+
+**解决方案**：
+1. **一个 PR 只能修改一个应用目录**
+2. 如果有多个应用需要提交，为每个应用创建单独的 PR
+3. 关闭当前 PR，重新创建只包含一个目录修改的 PR
+
+**示例**：
+```
+❌ 错误：一个 PR 同时包含 app1/ 和 app2/ 的修改
+✅ 正确：PR #1 只包含 app1/ 的修改
+✅ 正确：PR #2 只包含 app2/ 的修改
+```
+
+## 16. 缺少 values.yaml 文件
+
+**错误信息**：
+```
+missing values.yaml in folder
+```
+
+**原因**：
+- OAC 目录中缺少 `values.yaml` 文件
+- `values.yaml` 是 Helm Chart 的必需文件
+
+**解决方案**：
+1. 在 OAC 目录中创建 `values.yaml` 文件
+2. 至少包含基本的结构（即使是空配置）
+3. 参考已有应用的 `values.yaml` 作为模板
+
+**最小示例**：
+```yaml
+# values.yaml 最小配置
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "1.25"
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+```
+
+## 17. OlaresManifest.yaml 缺少必需字段
+
+**错误信息**：
+```
+"validation failed: Metadata.Icon","msg": "invalid parameter: ;icon must satisfy the expr: len($)>0"
+"validation failed: Entrances","msg": "invalid parameter: [];entrances must satisfy the expr: len($)>0 && len($)<=10"
+```
+
+**原因**：
+- `OlaresManifest.yaml` 缺少 `metadata.icon` 字段（GitBot 校验需要，但官方文档未明确说明）
+- `OlaresManifest.yaml` 缺少 `entrances` 字段（GitBot 校验需要，但官方文档未明确说明）
+- 这些字段在官方文档的 OlaresManifest.yaml 模板中不存在，是 GitBot 的隐藏要求
+
+**解决方案**：
+1. 在 `OlaresManifest.yaml` 中添加 `metadata.icon` 字段：
+   ```yaml
+   metadata:
+     name: your-app
+     description: Your app description
+     icon: https://app.cdn.olares.com/appstore/your-app/icon.png  # 必须添加
+     # ... 其他字段
+   ```
+
+2. 在 `OlaresManifest.yaml` 中添加 `entrances` 字段（定义应用入口）：
+   ```yaml
+   entrances:
+   - name: yourapp
+     port: 80
+     host: yourapp
+     title: Your App Title
+     icon: https://app.cdn.olares.com/appstore/your-app/icon.png
+     openMethod: window
+   ```
+
+3. 确保 `metadata.icon` 的 URL 可访问（返回 200 状态码）
+4. 提交新的 commit 触发 GitBot 重新检查
+
+**重要提示**：这些字段在 Olares 官方文档的模板中不存在，但是 GitBot 校验的隐藏必需字段。必须添加才能通过校验。
+
+## 18. templates 中的镜像字段包含模板占位符
+
+**错误信息**：
+```
+templates/deployment.yaml line 29: image field must not contain template placeholders
+```
+
+**原因**：
+- `templates/deployment.yaml` 中的 `image` 字段使用了 Helm 模板占位符（如 `{{ .Values.image.tag }}`）
+- GitBot 要求镜像字段必须是硬编码的具体镜像地址
+
+**解决方案**：
+1. 打开 `templates/deployment.yaml`
+2. 将 `image` 字段从模板占位符改为硬编码的具体镜像地址
+3. 如果需要在 values.yaml 中配置镜像，可以在 containers 环境变量中使用，但 `image` 字段必须硬编码
+
+**示例**：
+```yaml
+# ❌ 错误：包含模板占位符
+containers:
+- name: {{ .Chart.Name }}
+  image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+  # GitBot 会报错
+
+# ✅ 正确：硬编码镜像地址
+containers:
+- name: {{ .Chart.Name }}
+  image: "nginx:1.25"
+  # 必须通过校验
+```
+
+## 19. templates 引用了不存在的 Values 字段
+
+**错误信息**：
+```
+template: ... at <.Values.autoscaling.enabled>: nil pointer evaluating interface {}.enabled
+```
+
+**原因**：
+- `templates/` 中的文件引用了 `values.yaml` 中不存在的字段
+- 使用了标准的 Helm 模板但 `values.yaml` 中没有定义对应的配置项
+- 从 Helm 官方模板复制代码时，忘记在 `values.yaml` 中添加对应的配置
+
+**解决方案**：
+1. 检查错误信息中提到的字段（如 `.Values.autoscaling.enabled`）
+2. 在 `values.yaml` 中添加对应的配置项，或
+3. 删除 `templates/` 中对这些字段的引用
+
+**示例**：
+```yaml
+# values.yaml 中添加缺失的字段
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+```
+
+或者：
+```yaml
+# templates/deployment.yaml 中删除对 autoscaling 的引用
+# ❌ 删除以下代码
+{{- if .Values.autoscaling.enabled }}
+...
+{{- end }}
+```
+
+## 20. 容器未设置资源限制
+
+**错误信息**：
+```
+container: skilltestapp must set memory request/cpu request/memory limit/cpu limit
+```
+
+**原因**：
+- `templates/deployment.yaml` 中的容器未设置资源请求（requests）和限制（limits）
+- GitBot 要求所有容器必须明确设置内存和 CPU 的 requests/limits
+
+**解决方案**：
+1. 打开 `templates/deployment.yaml`
+2. 在 `containers` 部分添加 `resources` 字段
+3. 必须同时设置 `requests`（资源请求）和 `limits`（资源限制）
+4. 值必须与 `OlaresManifest.yaml` 中的 `requiredMemory`、`limitedMemory`、`requiredCpu`、`limitedCpu` 一致或更小
+
+**示例**：
+```yaml
+# templates/deployment.yaml
+containers:
+- name: {{ .Chart.Name }}
+  image: "nginx:1.25"
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+```
+
+**对应关系**：
+```yaml
+# OlaresManifest.yaml
+spec:
+  requiredMemory: 128Mi    # 对应 resources.requests.memory
+  limitedMemory: 256Mi     # 对应 resources.limits.memory
+  requiredCpu: 0.1         # 对应 resources.requests.cpu (100m = 0.1)
+  limitedCpu: 0.5          # 对应 resources.limits.cpu (500m = 0.5)
+```
+
+---
 
 ## 通用排查建议
 

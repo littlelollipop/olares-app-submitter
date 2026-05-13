@@ -78,7 +78,7 @@ PR 提交后会自动触发 GitBot 校验，常见状态：
 - `waiting to merge`：所有检查通过，等待自动合并
 - `merged`：已合并，稍后同步到应用市场
 
-**常见错误及解决方案**参考 `references/gitbot-errors.md`。
+**常见错误及解决方案**参考 `references/gitbot-errors.md`（已收录 20+ 个实际测试发现的 GitBot 校验错误及解决方案）。
 
 ### 4. 验证 OAC 包（可选）
 
