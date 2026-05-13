@@ -1,0 +1,5 @@
+apiVersion: v2
+name: your-app-name
+version: 1.0.0
+description: 在这里填写应用的简短描述
+type: application
