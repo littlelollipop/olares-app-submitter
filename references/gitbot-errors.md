@@ -419,9 +419,8 @@ resources: {}
 ```
 
 **原因**：
-- `OlaresManifest.yaml` 缺少 `metadata.icon` 字段（GitBot 校验需要，但官方文档未明确说明）
-- `OlaresManifest.yaml` 缺少 `entrances` 字段（GitBot 校验需要，但官方文档未明确说明）
-- 这些字段在官方文档的 OlaresManifest.yaml 模板中不存在，是 GitBot 的隐藏要求
+- `OlaresManifest.yaml` 缺少 `metadata.icon` 字段（GitBot 校验必需）
+- `OlaresManifest.yaml` 缺少 `entrances` 字段（GitBot 校验必需）
 
 **解决方案**：
 1. 在 `OlaresManifest.yaml` 中添加 `metadata.icon` 字段：
@@ -446,8 +445,6 @@ resources: {}
 
 3. 确保 `metadata.icon` 的 URL 可访问（返回 200 状态码）
 4. 提交新的 commit 触发 GitBot 重新检查
-
-**重要提示**：这些字段在 Olares 官方文档的模板中不存在，但是 GitBot 校验的隐藏必需字段。必须添加才能通过校验。
 
 ## 18. templates 中的镜像字段包含模板占位符
 
