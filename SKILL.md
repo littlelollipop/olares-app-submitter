@@ -1,10 +1,12 @@
 ---
 name: olares-app-submitter
-description: 帮助开发者将应用提交到 Olares 应用市场。支持 OAC 包创建、PR 提交流程、GitBot 校验规则检查、常见错误解决方案。适用于需要将自研应用发布到 Olares 市场的开发者。
+description: 帮助开发者将应用提交到 Olares 应用市场。支持 OAC 包创建、PR 提交流程、GitBot 校验规则检查、常见错误解决方案。适用于需要将自研应用发布到 Olares 市场的开发者。此为通用技能，适用于所有 AI 助手。
 agent_created: true
 ---
 
 # Olares 应用提交技能
+
+> **通用技能声明**: 此技能为通用知识库，适用于所有 AI 助手（WorkBuddy、Claude、GPT 等），不依赖特定平台功能。
 
 此技能提供将应用提交到 Olares 应用市场的完整工作流程和指导。
 
@@ -39,7 +41,7 @@ your-app/
 ```
 
 **快速开始**：
-1. 复制 `assets/Chart.yaml.template` 和 `assets/OlaresManifest.yaml.template` 作为模板
+1. 复制技能目录中的 `assets/Chart.yaml.template` 和 `assets/OlaresManifest.yaml.template` 作为模板（或参考 `references/` 目录中的规范文档）
 2. 根据应用信息填写模板中的占位符
 3. 创建 `owners` 文件，每行一个 GitHub 用户名
 4. 确保 `Chart.yaml` 的 `version` 与 `OlaresManifest.yaml` 的 `metadata.version` 完全一致
@@ -82,10 +84,15 @@ PR 提交后会自动触发 GitBot 校验，常见状态：
 
 ### 4. 验证 OAC 包（可选）
 
-使用 `scripts/validate_oac.py` 在提交前本地验证 OAC 包的合规性：
+使用技能目录中的 `scripts/validate_oac.py` 在提交前本地验证 OAC 包的合规性：
 
 ```bash
-python3 ~/.workbuddy/skills/olares-app-submitter/scripts/validate_oac.py /path/to/your-app
+# 如果技能已安装，使用实际路径
+python3 /path/to/olares-app-submitter/scripts/validate_oac.py /path/to/your-app
+
+# 或者直接下载脚本使用
+curl -O https://raw.githubusercontent.com/LittleLollipop/olares-app-submitter/main/scripts/validate_oac.py
+python3 validate_oac.py /path/to/your-app
 ```
 
 ## 注意事项

@@ -2,7 +2,9 @@
 
 English | [中文](#olares-应用提交技能)
 
-A WorkBuddy skill that helps developers submit applications to the Olares App Store. This skill provides complete workflow guidance for creating OAC (Olares Application Chart) packages, submitting PRs, and passing GitBot validation.
+> **Universal Skill Declaration**: This is a **platform-agnostic skill** designed for ALL AI assistants (WorkBuddy, Claude, GPT, Copilot, etc.). It contains no platform-specific dependencies and can be used by any AI that can read Markdown documentation.
+
+A comprehensive skill that helps developers submit applications to the Olares App Store. This skill provides complete workflow guidance for creating OAC (Olares Application Chart) packages, submitting PRs, and passing GitBot validation.
 
 ## 🌟 Features
 
@@ -133,6 +135,39 @@ Found a new GitBot error? Please help improve this skill by:
 2. Add the new error and solution to `references/gitbot-errors.md`
 3. Submit a Pull Request
 
+## 📦 Using This Skill with Different AI Assistants
+
+This is a **universal skill** that can be used by any AI assistant. Here's how:
+
+### For WorkBuddy Users
+
+```bash
+# Install via WorkBuddy
+/skills
+# Search for "olares-app-submitter" and install
+```
+
+### For Claude Users (via Claude API or Claude.ai)
+
+Simply provide the skill files to Claude:
+```
+Please read the SKILL.md and references/ files to help me submit my app to Olares App Store.
+```
+
+Or upload the skill directory as context.
+
+### For GPT Users (via GPTs or Assistants API)
+
+1. Upload `SKILL.md` and `references/*.md` as knowledge files
+2. Instruct the GPT: "Follow the workflow in SKILL.md to help submit an app to Olares"
+
+### For Other AI Assistants
+
+Any AI that can read Markdown can use this skill:
+1. Read `SKILL.md` for workflow overview
+2. Reference `references/gitbot-errors.md` when encountering errors
+3. Use `scripts/validate_oac.py` for local validation (Python required)
+
 ## 📝 License
 
 MIT License - feel free to use and modify this skill.
@@ -143,7 +178,9 @@ MIT License - feel free to use and modify this skill.
 
 [English](#olares-app-submitter-skill) | 中文
 
-一个 WorkBuddy 技能，帮助开发者将应用提交到 Olares 应用市场。提供创建 OAC（Olares Application Chart）包、提交 PR、通过 GitBot 校验的完整工作流程指导。
+> **通用技能声明**: 这是一个**平台无关的技能包**，适用于所有 AI 助手（WorkBuddy、Claude、GPT、Copilot 等）。不包含任何平台特定依赖，任何能够读取 Markdown 文档的 AI 都可以使用。
+
+一个全面的技能包，帮助开发者将应用提交到 Olares 应用市场。提供创建 OAC（Olares Application Chart）包、提交 PR、通过 GitBot 校验的完整工作流程指导。
 
 ## 🌟 功能特点
 
@@ -273,6 +310,39 @@ entrances:
 1. Fork 本仓库
 2. 将新的错误和解决方案添加到 `references/gitbot-errors.md`
 3. 提交 Pull Request
+
+## 📦 在不同 AI 助手中使用此技能
+
+这是一个**通用技能包**，任何 AI 助手都可以使用。方法如下：
+
+### 对于 WorkBuddy 用户
+
+```bash
+# 通过 WorkBuddy 安装
+/skills
+# 搜索 "olares-app-submitter" 并安装
+```
+
+### 对于 Claude 用户（通过 Claude API 或 Claude.ai）
+
+直接给 Claude 提供技能文件：
+```
+请阅读 SKILL.md 和 references/ 文件，帮助我将应用提交到 Olares 应用市场。
+```
+
+或者将技能目录作为上下文上传。
+
+### 对于 GPT 用户（通过 GPTs 或 Assistants API）
+
+1. 上传 `SKILL.md` 和 `references/*.md` 作为知识文件
+2. 指示 GPT："按照 SKILL.md 中的工作流程帮助提交应用到 Olares"
+
+### 对于其他 AI 助手
+
+任何能够读取 Markdown 的 AI 都可以使用此技能：
+1. 读取 `SKILL.md` 了解工作流程
+2. 遇到错误时参考 `references/gitbot-errors.md`
+3. 使用 `scripts/validate_oac.py` 进行本地验证（需要 Python）
 
 ## 📝 许可证
 
